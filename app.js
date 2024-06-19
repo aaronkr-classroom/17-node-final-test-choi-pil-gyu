@@ -101,15 +101,13 @@ router.use((req, res, next) => {
 const mongoose = require("mongoose"), // mongoose를 요청
   dbName = "ut-nodejs";
 
-// 데이터베이스 연결 설정
-mongoose.connect(`mongodb://127.0.0.1:27017/${dbName}`, {
-  useNewUrlParser: true,
-});
+mongoose.connect(
+  "mongodb+srv://ut-node:1234@ut-node.kv6iahy.mongodb.net/?retryWrites=true&w=majority&appName=UT-NODE"
+);
 
-// 연결되면 메시지를 보냄
 const db = mongoose.connection;
 db.once("open", () => {
-  console.log(`Connected to ${dbName} MongoDB using Mongoose!`);
+  console.log("db is connect!");
 });
 
 /**
@@ -194,14 +192,25 @@ router.delete(
  * Look at the User routes above for guidance = 위의 사용자 라우트를 참고
  * =====================================================================
  */
-// 1. index 라우트 생성 (모든 레코드 보기) = GET /discussions,                index 액션, index 뷰
-// 2. 생성 폼을 보기 위한 요청 처리        = GET /discussions/new,            new 액션
-// 3. 생성 데이터의 처리와 결과            = POST /discussions/create,        create 액션, redirectView 뷰
-// 4. show를 처리하기 위한 라우트          = GET /discussions/:id,            show 액션, showView 뷰
-// 5. edit를 처리하기 위한 라우트          = GET /discussions/:id/edit,       edit 액션
-// 6. 편집 데이터의 처리와 결과            = PUT /discussions/:id/update,     update 액션, redirectView 뷰
-// 7. 삭제를 처리하기 위한 라우트          = DELETE /discussions/:id/delete,  delete 액션, redirectView 뷰
-
+router.get("/discussions", discussionsController.index, discussionsController.indexView); // index 라우트 생성
+router.get("/discussions/new", discussionsController.new); // 생성 폼을 보기 위한 요청 처리
+router.post(
+  "/discussions/create",
+  discussionsController.create,
+  discussionsController.redirectView
+); // 생성 폼에서 받아온 데이터의 처리와 결과를 사용자 보기 페이지에 보여주기
+router.get("/discussions/:id", discussionsController.show, discussionsController.showView);
+router.get("/discussions/:id/edit", discussionsController.edit); // viewing을 처리하기 위한 라우트 추가
+router.put(
+  "/discussions/:id/update",
+  discussionsController.update,
+  discussionsController.redirectView
+); // 편집 폼에서 받아온 데이터의 처리와 결과를 사용자 보기 페이지에 보여주기
+router.delete(
+  "/discussions/:id/delete",
+  discussionsController.delete,
+  discussionsController.redirectView
+);
 /**
  * Comments
  */
